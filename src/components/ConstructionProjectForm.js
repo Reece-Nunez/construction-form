@@ -116,7 +116,10 @@ const ConstructionProjectForm = () => {
 
   return (
     <div className="form-card">
+      <div title-card>
       <h2 className="form-title">Construction Project Form</h2>
+      <img alt="logo" href="/assets/images/outlaw.png" />
+      </div>
 
       {isSubmitted && (
         <p className="success-message">Form submitted successfully!</p>
