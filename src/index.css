@@ -1,13 +1,133 @@
+/* src/index.css */
 body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom right, #e3f2fd, #f0f4c3);
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Card styling */
+.form-card {
+  background: white;
+  width: 90%;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Form title */
+.form-title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+}
+
+/* Form fields */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+.input, .select, .textarea {
+  width: 80%;
+  padding: 12px;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  margin: 5px;
+}
+
+.input:focus, .select:focus, .textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+}
+
+/* Add textarea constraints */
+.textarea {
+  resize: none;
+  max-height: 150px;  /* You can adjust this */
+}
+
+
+/* Submit button */
+.button {
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  color: white;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 85%;
+  transition: background 0.3s ease;
+}
+
+.button:hover {
+  background: linear-gradient(90deg, #0056b3, #004494);
+}
+
+/* Error messages */
+.error {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+/* Success message */
+.success-message {
+  color: white;
+  background: linear-gradient(90deg, #28a745, #218838);
+  padding: 10px;
+  border-radius: 8px;
+  animation: fadeIn 0.5s ease-in-out;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+.error-group {
+  animation: shake 0.4s ease;
+}
+
+/* Shake animation for errors */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-5px);
+  }
+  40%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
