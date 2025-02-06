@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import Modal from "./Modal"; // Reusable modal component
+import Spinner from "./Spinner"; // Loading spinner component
+import axios from "axios";
 import "../index.css"; // Using the established CSS
 
 const ConstructionProjectForm = () => {
@@ -14,15 +16,17 @@ const ConstructionProjectForm = () => {
     contactEmail: "",
     phoneNumber: "",
     projectAddress: "",
-    description: "",
-    buildingLength: "",
-    buildingWidth: "",
-    buildingHeight: "",
+    projectManagerName: "",
+    estimatedDuration: "",
+    preferredStartTime: "",
+    additionalNotes: "",
   });
   const [errors, setErrors] = useState({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const formRef = useRef(null);
 
   useEffect(() => {
     console.log("Form data state updated: ", formData);
@@ -46,7 +50,7 @@ const ConstructionProjectForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleConfirmSubmission = async (e) => {
     e.preventDefault();
     console.log("Form submission attempted.");
 
@@ -60,10 +64,10 @@ const ConstructionProjectForm = () => {
     setLoading(true);
     console.log("Submitting form with data: ", formData);
 
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const response = await axios.post("https://jsonplaceholder.typicode.com/posts", formData);
+      console.log("API response: ", response.data);
       setShowSuccessModal(true);
-      console.log("Form successfully submitted.");
       setFormData({
         projectName: "",
         projectType: "",
@@ -74,12 +78,29 @@ const ConstructionProjectForm = () => {
         contactEmail: "",
         phoneNumber: "",
         projectAddress: "",
-        description: "",
-        buildingLength: "",
-        buildingWidth: "",
-        buildingHeight: "",
+        projectManagerName: "",
+        estimatedDuration: "",
+        preferredStartTime: "",
+        additionalNotes: "",
       });
-    }, 2000);
+      setShowPreviewModal(false);
+    } catch (error) {
+      console.error("Error submitting form: ", error);
+    } finally {
+      setLoading(false);
+    }
+    setShowPreviewModal(true);
+  };
+
+  const handlePreviewSubmission = (e) => {
+    e.preventDefault();
+    if (!validateForm()) {
+      console.error("Validation failed: ", errors);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
+      return;
+    }
+    setShowPreviewModal(true);
   };
 
   const handleChange = (e) => {
@@ -100,10 +121,11 @@ const ConstructionProjectForm = () => {
     setFormData((prevData) => ({ ...prevData, [name]: formattedValue }));
   };
 
+
   return (
-    <div className="form-card">
+    <div className="form-card" ref={formRef}>
       <h1 className="form-title">Construction Project Form</h1>
-      <form onSubmit={handleSubmit} className={isShaking ? "error-group" : ""}>
+      <form onSubmit={handlePreviewSubmission} className={isShaking ? "error-group" : ""}>
         <div className="form-group">
           <label className="label">Project Name</label>
           <input
@@ -237,16 +259,36 @@ const ConstructionProjectForm = () => {
         </div>
 
         <button type="submit" className="button" disabled={loading} aria-label="Submit Form">
-          {loading ? "Submitting..." : "Submit"}
+          {loading ? <Spinner /> : "Submit"}
         </button>
       </form>
+
+      {showPreviewModal && (
+        <Modal onClose={() => setShowPreviewModal(false)}>
+          <div className="preview-modal-content">
+            <h2>Project Details Preview</h2>
+            <p><strong>Project Name:</strong> {formData.projectName}</p>
+            <p><strong>Project Type:</strong> {formData.projectType}</p>
+            <p><strong>Project Sub-Type:</strong> {formData.projectSubType}</p>
+            <p><strong>Budget:</strong> {formData.budget}</p>
+            <p><strong>Start Date:</strong> {formData.startDate}</p>
+            <p><strong>Completion Date:</strong> {formData.completionDate}</p>
+            <p><strong>Contact Email:</strong> {formData.contactEmail}</p>
+            <p><strong>Phone Number:</strong> {formData.phoneNumber}</p>
+            <p><strong>Project Address:</strong> {formData.projectAddress}</p>
+            <button onClick={handleConfirmSubmission} className="button">Confirm and Submit</button>
+          </div>
+        </Modal>
+      )}
 
       {showSuccessModal && (
         <Modal onClose={() => setShowSuccessModal(false)}>
           <div className="success-modal-content">
             <AiOutlineCheckCircle size={50} color="green" />
             <p>Form submitted successfully!</p>
-            <button onClick={() => setShowSuccessModal(false)} className="button" aria-label="Close Success Modal">Close</button>
+            <button onClick={() => setShowSuccessModal(false)} className="button" aria-label="Close Success Modal">
+              Close
+            </button>
           </div>
         </Modal>
       )}
