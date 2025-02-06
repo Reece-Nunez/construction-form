@@ -20,6 +20,10 @@ const ConstructionProjectForm = () => {
     estimatedDuration: "",
     preferredStartTime: "",
     additionalNotes: "",
+    buildingLength: "",
+    buildingWidth: "",
+    buildingHeight: "",
+    squareFootage: "",
   });
   const [errors, setErrors] = useState({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -32,8 +36,17 @@ const ConstructionProjectForm = () => {
     console.log("Form data state updated: ", formData);
   }, [formData]);
 
+  const calculateSquareFootage = () => {
+    const length = parseFloat(formData.buildingLength) || 0;
+    const width = parseFloat(formData.buildingWidth) || 0;
+    const squareFootage = length * width;
+    setFormData((prevData) => ({ ...prevData, squareFootage: squareFootage ? squareFootage.toFixed(2) : "" }));
+  };
+
   const validateForm = () => {
     const newErrors = {};
+    console.log("Validating fields: ", formData);  // Log form data to debug
+
     if (!formData.projectName) newErrors.projectName = "Project Name is required.";
     if (!formData.budget) newErrors.budget = "Budget is required.";
     if (isNaN(Number(formData.budget.replace(/[^0-9]/g, '')))) newErrors.budget = "Budget must be a positive number.";
@@ -45,6 +58,9 @@ const ConstructionProjectForm = () => {
     if (!formData.contactEmail.includes("@")) newErrors.contactEmail = "Invalid email format.";
     const numericPhone = formData.phoneNumber.replace(/\D/g, "");
     if (numericPhone.length !== 10) newErrors.phoneNumber = "Valid 10-digit phone number is required.";
+
+    console.log("Validation errors: ", newErrors);  // Log validation errors
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -63,6 +79,7 @@ const ConstructionProjectForm = () => {
 
     setLoading(true);
     console.log("Submitting form with data: ", formData);
+    setShowPreviewModal(false);
 
     try {
       const response = await axios.post("https://jsonplaceholder.typicode.com/posts", formData);
@@ -82,33 +99,40 @@ const ConstructionProjectForm = () => {
         estimatedDuration: "",
         preferredStartTime: "",
         additionalNotes: "",
+        buildingLength: "",
+        buildingWidth: "",
+        buildingHeight: "",
+        squareFootage: "",
       });
-      setShowPreviewModal(false);
     } catch (error) {
       console.error("Error submitting form: ", error);
     } finally {
       setLoading(false);
     }
-    setShowPreviewModal(false);
   };
 
   const handlePreviewSubmission = (e) => {
     e.preventDefault();
+  
     if (!validateForm()) {
       console.error("Validation failed: ", errors);
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
       return;
     }
+  
+    calculateSquareFootage();
     setShowPreviewModal(true);
   };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     let formattedValue = value;
-
+  
     if (name === "budget") {
-      formattedValue = `$${Number(value.replace(/[^0-9]/g, "")).toLocaleString()}`;
+      formattedValue = value.replace(/[^0-9]/g, "");  // Remove non-numeric characters first
+      if (formattedValue) formattedValue = `$${Number(formattedValue).toLocaleString()}`;
     } else if (name === "phoneNumber") {
       const cleaned = value.replace(/\D/g, "");
       formattedValue = cleaned.length <= 3
@@ -117,10 +141,10 @@ const ConstructionProjectForm = () => {
         ? `(${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`
         : `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
     }
-
+  
     setFormData((prevData) => ({ ...prevData, [name]: formattedValue }));
   };
-
+  
 
   return (
     <div className="form-card" ref={formRef}>
@@ -218,26 +242,13 @@ const ConstructionProjectForm = () => {
         </div>
 
         <div className="form-group">
-          <label className="label">Project Address</label>
-          <input
-            type="text"
-            name="projectAddress"
-            value={formData.projectAddress}
-            onChange={handleChange}
-            placeholder="Enter project address"
-            className="input"
-            aria-label="Project Address"
-          />
-        </div>
-
-        <div className="form-group">
           <label className="label">Contact Email</label>
           <input
             type="email"
             name="contactEmail"
             value={formData.contactEmail}
             onChange={handleChange}
-            placeholder="Enter contact email"
+            placeholder="Enter contact email address"
             className="input"
             aria-label="Contact Email"
           />
@@ -251,11 +262,50 @@ const ConstructionProjectForm = () => {
             name="phoneNumber"
             value={formData.phoneNumber}
             onChange={handleChange}
-            placeholder="Enter phone number (e.g., (123) 456-7890)"
+            placeholder="Enter contact phone number (e.g., 123-456-7890)"
             className="input"
             aria-label="Phone Number"
           />
           {errors.phoneNumber && <p className="error">{errors.phoneNumber}</p>}
+        </div>
+
+        <div className="form-group">
+          <label className="label">Building Length (ft)</label>
+          <input
+            type="text"
+            name="buildingLength"
+            value={formData.buildingLength}
+            onChange={handleChange}
+            placeholder="Enter building length"
+            className="input"
+            aria-label="Building Length"
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="label">Building Width (ft)</label>
+          <input
+            type="text"
+            name="buildingWidth"
+            value={formData.buildingWidth}
+            onChange={handleChange}
+            placeholder="Enter building width"
+            className="input"
+            aria-label="Building Width"
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="label">Building Height (ft)</label>
+          <input
+            type="text"
+            name="buildingHeight"
+            value={formData.buildingHeight}
+            onChange={handleChange}
+            placeholder="Enter building height"
+            className="input"
+            aria-label="Building Height"
+          />
         </div>
 
         <button type="submit" className="button" disabled={loading} aria-label="Submit Form">
@@ -276,6 +326,10 @@ const ConstructionProjectForm = () => {
             <p><strong>Contact Email:</strong> {formData.contactEmail}</p>
             <p><strong>Phone Number:</strong> {formData.phoneNumber}</p>
             <p><strong>Project Address:</strong> {formData.projectAddress}</p>
+            <p><strong>Building Length:</strong> {formData.buildingLength}</p>
+            <p><strong>Building Width:</strong> {formData.buildingWidth}</p>
+            <p><strong>Building Height:</strong> {formData.buildingHeight}</p>
+            <p><strong>Square Footage:</strong> {formData.squareFootage} sq ft</p>
             <button onClick={handleConfirmSubmission} className="button">Confirm and Submit</button>
           </div>
         </Modal>
