@@ -89,7 +89,7 @@ const ConstructionProjectForm = () => {
     } finally {
       setLoading(false);
     }
-    setShowPreviewModal(true);
+    setShowPreviewModal(false);
   };
 
   const handlePreviewSubmission = (e) => {
