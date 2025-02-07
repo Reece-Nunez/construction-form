@@ -242,6 +242,20 @@ const ConstructionProjectForm = () => {
         </div>
 
         <div className="form-group">
+          <label className="label">Project Address</label>
+          <input
+          type="text"
+          name="projectAddress"
+          value={formData.projectAddress}
+          onChange={handleChange}
+          className="input"
+          aria-label="Project Address"
+          onFocus={(e) => e.target.showPicker && e.target.showPicker()}
+          />
+          {errors.projectAddress && <p className="error">{errors.projectAddress}</p>}
+        </div>
+
+        <div className="form-group">
           <label className="label">Contact Email</label>
           <input
             type="email"
@@ -305,6 +319,19 @@ const ConstructionProjectForm = () => {
             placeholder="Enter building height"
             className="input"
             aria-label="Building Height"
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="label">Additional Notes</label>
+          <textarea
+          type="text"
+          name="additionalNotes"
+          value={formData.additionalNotes}
+          onChange={handleChange}
+          placeholder="Any other notes you need to mention..."
+          className="input"
+          aria-label="Additional Notes"
           />
         </div>
 
