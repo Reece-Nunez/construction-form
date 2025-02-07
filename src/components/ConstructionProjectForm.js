@@ -82,7 +82,7 @@ const ConstructionProjectForm = () => {
     setShowPreviewModal(false);
 
     try {
-      const response = await axios.post("https://yqa9atlz7f.execute-api.us-east-1.amazonaws.com/production", formData);
+      const response = await axios.post("https://yqa9atlz7f.execute-api.us-east-1.amazonaws.com/production/submit", formData);
       console.log("API response: ", response.data);
       setShowSuccessModal(true);
       setFormData({
