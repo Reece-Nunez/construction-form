@@ -90,6 +90,12 @@ body {
   margin-top: 5px;
 }
 
+.success-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 /* Success message */
 .success-message {
   color: white;
