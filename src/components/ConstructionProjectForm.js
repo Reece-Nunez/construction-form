@@ -113,23 +113,23 @@ const ConstructionProjectForm = () => {
 
   const handlePreviewSubmission = (e) => {
     e.preventDefault();
-  
+
     if (!validateForm()) {
       console.error("Validation failed: ", errors);
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
       return;
     }
-  
+
     calculateSquareFootage();
     setShowPreviewModal(true);
   };
-  
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     let formattedValue = value;
-  
+
     if (name === "budget") {
       formattedValue = value.replace(/[^0-9]/g, "");  // Remove non-numeric characters first
       if (formattedValue) formattedValue = `$${Number(formattedValue).toLocaleString()}`;
@@ -138,13 +138,13 @@ const ConstructionProjectForm = () => {
       formattedValue = cleaned.length <= 3
         ? `(${cleaned}`
         : cleaned.length <= 6
-        ? `(${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`
-        : `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
+          ? `(${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`
+          : `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
     }
-  
+
     setFormData((prevData) => ({ ...prevData, [name]: formattedValue }));
   };
-  
+
 
   return (
     <div className="form-card" ref={formRef}>
@@ -180,24 +180,26 @@ const ConstructionProjectForm = () => {
           </select>
         </div>
 
-        <div className="form-group">
-          <label className="label">Project Sub-Type</label>
-          <select
-            name="projectSubType"
-            value={formData.projectSubType}
-            onChange={handleChange}
-            className="select"
-            aria-label="Project Sub-Type"
-          >
-            <option value="">Select project sub-type</option>
-            <option value="Single Family">Single Family</option>
-            <option value="Apartment">Apartment</option>
-            <option value="Modular Home">Modular Home</option>
-            <option value="Condo">Condo</option>
-            <option value="Townhome">Townhome</option>
-            <option value="Barndominium">Barndominium</option>
-          </select>
-        </div>
+        {formData.projectType === "Residential" && (
+          <div className="form-group">
+            <label className="label">Project Sub-Type</label>
+            <select
+              name="projectSubType"
+              value={formData.projectSubType}
+              onChange={handleChange}
+              className="select"
+              aria-label="Project Sub-Type"
+            >
+              <option value="">Select Residential sub-type</option>
+              <option value="Single Family">Single Family</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Modular Home">Modular Home</option>
+              <option value="Condo">Condo</option>
+              <option value="Townhome">Townhome</option>
+              <option value="Barndominium">Barndominium</option>
+            </select>
+          </div>
+        )}
 
         <div className="form-group">
           <label className="label">Budget</label>
@@ -244,13 +246,13 @@ const ConstructionProjectForm = () => {
         <div className="form-group">
           <label className="label">Project Address</label>
           <input
-          type="text"
-          name="projectAddress"
-          value={formData.projectAddress}
-          onChange={handleChange}
-          className="input"
-          aria-label="Project Address"
-          onFocus={(e) => e.target.showPicker && e.target.showPicker()}
+            type="text"
+            name="projectAddress"
+            value={formData.projectAddress}
+            onChange={handleChange}
+            className="input"
+            aria-label="Project Address"
+            onFocus={(e) => e.target.showPicker && e.target.showPicker()}
           />
           {errors.projectAddress && <p className="error">{errors.projectAddress}</p>}
         </div>
@@ -325,13 +327,13 @@ const ConstructionProjectForm = () => {
         <div className="form-group">
           <label className="label">Additional Notes</label>
           <textarea
-          type="text"
-          name="additionalNotes"
-          value={formData.additionalNotes}
-          onChange={handleChange}
-          placeholder="Any other notes you need to mention..."
-          className="input"
-          aria-label="Additional Notes"
+            type="text"
+            name="additionalNotes"
+            value={formData.additionalNotes}
+            onChange={handleChange}
+            placeholder="Any other notes you need to mention..."
+            className="input"
+            aria-label="Additional Notes"
           />
         </div>
 
